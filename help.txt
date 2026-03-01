@@ -1,0 +1,81 @@
+mlscribe - ML/DS demo document CLI tool
+
+Usage: mlscribe <command> [options]
+
+COMMANDS (core):
+  init <file> <title>               Create a new document
+  note <file> [text]                Append commentary (stdin if no text arg)
+  exec <file> <lang> [code]         Run code, capture output, append both
+  image <file> <image-path>         Copy image into doc dir, embed reference
+  pop <file>                        Remove last block
+  verify <file>                     Re-run all code blocks, compare output (exit 1 on mismatch)
+  extract <file>                    Emit CLI commands to recreate the document
+
+COMMANDS (ML/DS):
+  metrics <file> --json '{...}'     Append a metrics table block
+  gate <file> <name> <PASS|FAIL|SKIPPED>  Append a gate decision block
+  artifact <file> --skill <name> --out-dir <dir>  Write JSON artifact file
+
+OPTIONS:
+  --version                         Print version
+  --help                            Show this help
+
+EXEC OPTIONS:
+  --workdir <dir>                   Working directory for code execution
+
+METRICS OPTIONS:
+  --json <json>                     Metrics as JSON object (or stdin)
+  --baseline <file>                 Baseline metrics file for delta computation
+
+GATE OPTIONS:
+  --decision GO|NO-GO|CONDITIONAL   Gate decision (default: omitted)
+  --confidence high|medium|low      Confidence level (default: omitted)
+  --findings <text>                 Findings text or JSON
+
+ARTIFACT OPTIONS:
+  --skill <name>                    Skill name (required)
+  --out-dir <dir>                   Output directory (required)
+  --run-id <id>                     Run ID for artifact correlation
+  --json <json>                     Artifact payload JSON (or stdin)
+
+ENVIRONMENT:
+  MLSCRIBE_REMOTE_URL               If set, POST document to this URL after each write
+
+SUPPORTED LANGUAGES (exec):
+  python, python3, bash, sh, zsh, ruby, node, javascript, js, r
+
+EXAMPLES:
+  # Create a new document
+  mlscribe init experiment.md "Model Training Experiment"
+
+  # Add a note
+  mlscribe note experiment.md "Training ResNet-50 on CIFAR-10"
+
+  # Run code and capture output
+  mlscribe exec experiment.md python "print('hello world')"
+
+  # Record metrics
+  mlscribe metrics experiment.md --json '{"accuracy": 0.94, "loss": 0.12}'
+
+  # Record metrics with baseline delta
+  mlscribe metrics experiment.md --json '{"accuracy": 0.94}' --baseline baseline.json
+
+  # Record a gate decision
+  mlscribe gate experiment.md data-quality PASS --decision GO --confidence high
+
+  # Emit a JSON artifact compatible with agentic-ml-plugin
+  mlscribe artifact experiment.md --skill eda --out-dir ./artifacts \
+    --run-id run-001 --json '{"decision": "GO", "summary": "Data quality good"}'
+
+  # Verify all code blocks still produce same output
+  mlscribe verify experiment.md
+
+  # Extract CLI commands to recreate the document
+  mlscribe extract experiment.md
+
+ARTIFACT SCHEMA:
+  JSON artifacts match the agentic-ml-plugin base schema (schema_version: "1.0"):
+    schema_version, skill_name, run_id, timestamp, decision,
+    confidence, summary, findings, next_commands
+
+VERSION: 0.1.0
