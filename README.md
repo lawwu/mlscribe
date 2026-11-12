@@ -136,6 +136,18 @@ JSON artifacts match the agentic-ml-plugin base schema (`schema_version: "1.0"`)
 |----------|-------------|
 | `MLSCRIBE_REMOTE_URL` | If set, POST the document to this URL after each write |
 
+## Development
+
+The GitHub Actions workflows are locked: every action is pinned to an exact commit in
+`.github/workflows/actions.lock`, and CI checks the lockfile and lints the workflows on
+every pull request.
+
+- After changing a workflow, relock with `gh actions-lock` (the
+  [gh-actions-lock](https://github.com/github/gh-actions-lock) extension) and commit
+  `actions.lock`.
+- Lint the workflows with `uvx zizmor .github/`.
+- Keep comments off `uses:` lines: relocking rewrites those lines and drops them.
+
 ## Acknowledgements
 
 Inspired by [simonw/showboat](https://github.com/simonw/showboat) by Simon Willison.
