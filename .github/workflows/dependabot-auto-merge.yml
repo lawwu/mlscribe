@@ -1,0 +1,35 @@
+# Turns on auto-merge (squash) for Dependabot's grouped github-actions pull requests
+# when every update in the group is a patch or minor bump and no maintainers changed.
+# Auto-merge then waits for the checks the main ruleset requires (Actions lock,
+# zizmor, test), so a bump that leaves actions.lock stale or fails the lint never
+# merges. Major bumps, gomod updates and anything else wait for a human.
+name: dependabot auto-merge
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  auto-merge:
+    name: Dependabot auto-merge
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'lawwu/mlscribe'
+    permissions:
+      contents: write # gh pr merge --auto merges into main once the required checks pass
+      pull-requests: write # gh pr merge --auto turns on auto-merge for the pull request
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3.1.0
+      - name: Enable auto-merge
+        if: >-
+          steps.metadata.outputs.package-ecosystem == 'github_actions' &&
+          steps.metadata.outputs.dependency-group == 'github-actions' &&
+          steps.metadata.outputs.update-type != 'version-update:semver-major' &&
+          steps.metadata.outputs.maintainer-changes != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: gh pr merge --auto --squash "$PR_URL"

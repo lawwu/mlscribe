@@ -6,6 +6,8 @@ workflows:
     '.github/workflows/actions.yml':
         - 'actions/checkout@v7.0.1'
         - 'zizmorcore/zizmor-action@v0.8.1'
+    '.github/workflows/dependabot-auto-merge.yml':
+        - 'dependabot/fetch-metadata@v3.1.0'
     '.github/workflows/publish.yml':
         - 'actions/checkout@v6.1.0'
         - 'actions/download-artifact@v4.3.0'
@@ -57,6 +59,11 @@ dependencies:
         commit: 'sha1-37802adc94f370d6bfd71619e3f0bf239e1f3b78'
         owner_id: 115962839
         repo_id: 846733598
+    'dependabot/fetch-metadata@v3.1.0':
+        ref: 'v3.1.0'
+        commit: 'sha1-25dd0e34f4fe68f24cc83900b1fe3fe149efef98'
+        owner_id: 27347476
+        repo_id: 371068214
     'github/codeql-action@9b3254085494b55a0f7c4c2b3d2d52cc712ce370':
         ref: 'v4.39.1'
         commit: 'sha1-9b3254085494b55a0f7c4c2b3d2d52cc712ce370'

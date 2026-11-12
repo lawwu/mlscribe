@@ -147,6 +147,9 @@ every pull request.
   `actions.lock`.
 - Lint the workflows with `uvx zizmor .github/`.
 - Keep comments off `uses:` lines: relocking rewrites those lines and drops them.
+- Dependabot proposes action updates weekly, after a 7-day cooldown. Grouped
+  patch and minor action updates merge themselves once the required checks
+  (Actions lock, zizmor, test) pass; major bumps and Go module updates wait for review.
 
 ## Acknowledgements
 
