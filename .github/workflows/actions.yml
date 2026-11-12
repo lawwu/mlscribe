@@ -1,0 +1,42 @@
+# Checks the workflows themselves on every push to main and every pull request.
+# - Actions lock: every action is locked to an exact commit in actions.lock, and each
+#   locked commit still matches upstream (catches a moved tag or a stale lockfile).
+#   After changing a workflow, relock with `gh actions-lock` and commit actions.lock.
+# - zizmor: lints the workflows for unpinned actions, broad token permissions,
+#   persisted credentials, template injection and the like. Run locally with
+#   `uvx zizmor .github/`.
+name: actions
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lockfile:
+    name: Actions lock
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - run: gh extension install github/gh-actions-lock --pin v0.4.1
+      - run: gh actions-lock --verify
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: zizmorcore/zizmor-action@v0.8.1
+        with:
+          version: 1.32.0
+          advanced-security: false # findings fail the job, as annotations on the pull request
+          annotations: true
