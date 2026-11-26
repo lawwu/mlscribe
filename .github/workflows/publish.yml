@@ -34,7 +34,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v7.0.0
+        uses: actions/setup-go@v7.1.0
         with:
           go-version: '1.23'
           # No module cache in release builds: a poisoned cache would ship in the artifacts.
@@ -99,13 +99,13 @@ jobs:
         with:
           persist-credentials: false
       - name: Set up Go
-        uses: actions/setup-go@v7.0.0
+        uses: actions/setup-go@v7.1.0
         with:
           go-version: '1.23'
           # No module cache in release builds: a poisoned cache would ship in the artifacts.
           cache: false
       - name: Install uv
-        uses: astral-sh/setup-uv@v10.3.3
+        uses: astral-sh/setup-uv@v10.4.0
         with:
           enable-cache: false
       - name: Build wheels
